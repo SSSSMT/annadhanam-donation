@@ -1,41 +1,35 @@
 const Razorpay = require('razorpay');
 
-exports.handler = async function (event, context) {
-  // Only allow POST requests
-  if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: 'Method Not Allowed' };
-  }
+exports.handler = async function(event, context) {
+    // Only allow POST requests
+    if (event.httpMethod !== "POST") {
+        return { statusCode: 405, body: "Method Not Allowed" };
+    }
 
-  try {
-    const { amount } = JSON.parse(event.body);
+    const data = JSON.parse(event.body);
 
-    const razorpay = new Razorpay({
-      key_id: process.env.RAZORPAY_KEY_ID,
-      key_secret: process.env.RAZORPAY_KEY_SECRET,
+    // Initialize Razorpay with keys from Environment Variables
+    const instance = new Razorpay({
+        key_id: 'rzp_test_S0KRA9uxjQhX1T', // It's okay to hardcode Public Key here
+        key_secret: process.env.RAZORPAY_KEY_SECRET // Loaded securely from Netlify
     });
 
     const options = {
-      amount: amount * 100, // Amount in paise
-      currency: "INR",
-      receipt: "receipt_" + Date.now(),
-      payment_capture: 1,
+        amount: data.amount * 100, // amount in the smallest currency unit (paise)
+        currency: "INR",
+        receipt: "receipt_order_" + Date.now(),
     };
 
-    const order = await razorpay.orders.create(options);
-
-    return {
-      statusCode: 200,
-      body: JSON.stringify({
-        id: order.id,
-        currency: order.currency,
-        amount: order.amount,
-      }),
-    };
-  } catch (error) {
-    console.error(error);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: error.message }),
-    };
-  }
+    try {
+        const order = await instance.orders.create(options);
+        return {
+            statusCode: 200,
+            body: JSON.stringify(order),
+        };
+    } catch (error) {
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ error: error.message }),
+        };
+    }
 };

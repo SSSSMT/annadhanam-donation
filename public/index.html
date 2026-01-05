@@ -3,68 +3,316 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Annadhanam Donation</title>
+    <title>Donate - Shirdi Sai Sivanesan Swamiji Memorial Trust</title>
+    
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
     <style>
-        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f4f4f4; margin: 0; }
-        .card { background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; max-width: 400px; width: 100%; }
-        input, button { width: 90%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ddd; }
-        button { background-color: #ff6b6b; color: white; border: none; font-weight: bold; cursor: pointer; width: 95%; }
-        button:hover { background-color: #ff5252; }
-        .logo { font-size: 2rem; margin-bottom: 1rem; }
+        :root {
+            --primary-color: #F47216; /* Saffron/Orange */
+            --secondary-color: #FFFFFF; /* White */
+            --text-dark: #333333;
+            --text-light: #666666;
+            --border-color: #dddddd;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .donation-card {
+            background-color: var(--secondary-color);
+            width: 100%;
+            max-width: 480px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        /* Header Section */
+        .header {
+            background-color: var(--primary-color);
+            color: var(--secondary-color);
+            padding: 25px 20px;
+            text-align: center;
+        }
+
+        .header h2 {
+            font-size: 1.4rem;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .header p {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            line-height: 1.4;
+        }
+
+        /* Form Section */
+        .form-body {
+            padding: 30px 25px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(244, 114, 22, 0.1);
+        }
+
+        /* Amount Section */
+        .amount-chips {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .chip {
+            padding: 10px;
+            border: 1px solid var(--primary-color);
+            background-color: #fff5eb;
+            color: var(--primary-color);
+            text-align: center;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .chip:hover, .chip.active {
+            background-color: var(--primary-color);
+            color: var(--secondary-color);
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .currency-symbol {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+        }
+
+        .form-control.with-icon {
+            padding-left: 35px;
+        }
+
+        .helper-text {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            margin-top: 5px;
+        }
+
+        /* Submit Button */
+        .btn-submit {
+            width: 100%;
+            background-color: var(--primary-color);
+            color: var(--secondary-color);
+            border: none;
+            padding: 15px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-submit:hover {
+            background-color: #d6600e; 
+        }
+
+        .btn-submit:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <div class="logo">🍚 Annadhanam</div>
-    <p>Support our cause to feed the needy.</p>
-    
-    <input type="text" id="name" placeholder="Your Name" required />
-    <input type="number" id="amount" placeholder="Amount (INR)" required />
-    <button id="pay-btn" onclick="donate()">Donate Now</button>
+<div class="donation-card">
+    <div class="header">
+        <h2>Shirdi Sai Sivanesan Swamiji Memorial Trust</h2>
+        <p>Registered Office: 3/166, Matheswaran Kovil Thottam,<br>Naickenpalayam Post, Coimbatore, Tamil Nadu 641020</p>
+    </div>
+
+    <div class="form-body">
+        <form id="donationForm">
+            <div class="form-group">
+                <label for="fullName">Full Name <span style="color:red">*</span></label>
+                <input type="text" id="fullName" class="form-control" placeholder="Enter your full name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Phone Number <span style="color:red">*</span></label>
+                <input type="tel" id="phone" class="form-control" placeholder="Enter mobile number" pattern="[0-9]{10}" title="Please enter a valid 10-digit number" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address (Optional)</label>
+                <input type="email" id="email" class="form-control" placeholder="Enter email address">
+            </div>
+
+            <div class="form-group">
+                <label>Donation Amount (₹)</label>
+                
+                <div class="amount-chips">
+                    <div class="chip" onclick="setAmount(200)">₹200</div>
+                    <div class="chip" onclick="setAmount(500)">₹500</div>
+                    <div class="chip" onclick="setAmount(1000)">₹1,000</div>
+                    <div class="chip" onclick="setAmount(10000)">₹10,000</div>
+                </div>
+
+                <div class="input-group">
+                    <span class="currency-symbol">₹</span>
+                    <input type="number" id="amount" class="form-control with-icon" 
+                           placeholder="Enter amount" 
+                           min="10" 
+                           max="1000000" 
+                           required>
+                </div>
+                <div class="helper-text">Min: ₹10 | Max: ₹10,00,000</div>
+            </div>
+
+            <button type="button" id="payBtn" class="btn-submit">Donate Now</button>
+        </form>
+    </div>
 </div>
 
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
-    async function donate() {
+    // Public Key ID (Safe to be in frontend)
+    const RAZORPAY_KEY_ID = "rzp_test_S0KRA9uxjQhX1T"; 
+    
+    function setAmount(value) {
+        document.getElementById('amount').value = value;
+    }
+
+    document.getElementById('payBtn').onclick = async function(e) {
+        e.preventDefault();
+
+        // 1. Get Data from Form
+        const name = document.getElementById('fullName').value;
+        const phone = document.getElementById('phone').value;
+        const email = document.getElementById('email').value;
         const amount = document.getElementById('amount').value;
-        const name = document.getElementById('name').value;
 
-        if(!amount || !name) { alert("Please enter name and amount"); return; }
+        // 2. Client-side Validation
+        if(!name || !phone || !amount) {
+            alert("Please fill in all mandatory fields.");
+            return;
+        }
+        if(amount < 10 || amount > 1000000) {
+            alert("Please enter a donation amount between ₹10 and ₹10,00,000.");
+            return;
+        }
 
-        document.getElementById('pay-btn').innerText = "Processing...";
+        // 3. User Feedback (Disable button while processing)
+        const btn = document.getElementById('payBtn');
+        const originalText = btn.innerText;
+        btn.innerText = "Processing...";
+        btn.disabled = true;
 
         try {
-            const response = await fetch('/.netlify/functions/create-order', {
+            // 4. Request Order Creation from Netlify Backend
+            // This calls the file located at: netlify/functions/create_order.js
+            const response = await fetch('/.netlify/functions/create_order', {
                 method: 'POST',
-                body: JSON.stringify({ amount: amount })
+                body: JSON.stringify({ amount: amount }),
+                headers: { 'Content-Type': 'application/json' }
             });
-            const order = await response.json();
 
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error('Server Error: ' + errorText);
+            }
+
+            const orderData = await response.json();
+
+            // 5. Initialize Razorpay with the Order ID from Backend
             var options = {
-                "key": "YOUR_RAZORPAY_KEY_ID_PUBLIC", // REPLACE THIS with your Key ID
-                "amount": order.amount, 
-                "currency": order.currency,
-                "name": "Annadhanam Trust",
-                "description": "Donation for Food",
-                "order_id": order.id, 
+                "key": RAZORPAY_KEY_ID, 
+                "amount": orderData.amount, // Amount from server (paise)
+                "currency": orderData.currency,
+                "name": "Shirdi Sai Sivanesan Swamiji Memorial Trust",
+                "description": "Donation",
+                "order_id": orderData.id, // CRITICAL: This is the secure order ID
                 "handler": function (response){
-                    alert("Payment Successful! ID: " + response.razorpay_payment_id);
-                    window.location.reload();
+                    // SUCCESS: Payment completed
+                    alert("Payment Successful!\nPayment ID: " + response.razorpay_payment_id);
+                    // Reset form
+                    document.getElementById('donationForm').reset();
                 },
-                "prefill": { "name": name },
-                "theme": { "color": "#ff6b6b" }
+                "prefill": {
+                    "name": name,
+                    "email": email,
+                    "contact": phone
+                },
+                "theme": {
+                    "color": "#F47216"
+                },
+                "modal": {
+                    "ondismiss": function(){
+                        // If user closes modal without paying
+                        btn.innerText = originalText;
+                        btn.disabled = false;
+                    }
+                }
             };
+
             var rzp1 = new Razorpay(options);
-            rzp1.open();
             
-        } catch (err) {
-            console.error(err);
-            alert("Error starting payment. Check console.");
-        } finally {
-            document.getElementById('pay-btn').innerText = "Donate Now";
+            rzp1.on('payment.failed', function (response){
+                alert("Payment Failed.\nReason: " + response.error.description);
+                btn.innerText = originalText;
+                btn.disabled = false;
+            });
+            
+            rzp1.open();
+
+        } catch (error) {
+            console.error(error);
+            alert("Unable to initialize payment. Please check your connection or try again.");
+            btn.innerText = originalText;
+            btn.disabled = false;
         }
-    }
+    };
 </script>
 
 </body>
